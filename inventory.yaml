@@ -1,0 +1,13 @@
+version: 2
+groups:
+  - name: agents
+    targets:
+      - _plugin: task
+        task: vagrant::inventory
+        parameters:
+          match: agent
+targets:
+  - _plugin: task
+    task: vagrant::inventory
+    parameters:
+      match: master

@@ -1,0 +1,16 @@
+plan demo::setup_pe() {
+  run_command('mkdir -p /etc/puppetlabs/facter/facts.d', master)
+  upload_file('demo/fqdn.txt', '/etc/puppetlabs/facter/facts.d/fqdn.txt', master)
+  run_command('/vagrant/puppet-enterprise/puppet-enterprise-installer -c /vagrant/puppet-enterprise/conf.d/pe.conf', master)
+  run_command('sed -i s/fqdn/hostname/ /opt/puppetlabs/puppet/lib/ruby/vendor_ruby/puppet/indirector/catalog/compiler.rb', master)
+  run_command('ln -s /vagrant/site/update /opt/puppetlabs/puppet/modules/update', master)
+  run_command('systemctl restart pe-puppetserver', master)
+  run_command('/opt/puppetlabs/bin/puppet agent --onetime --no-daemonize --verbose --no-usecacheonfailure --no-splay', master)
+  run_command('/opt/puppetlabs/bin/puppet agent --onetime --no-daemonize --verbose --no-usecacheonfailure --no-splay', master)
+  run_command('mkdir -p /etc/puppetlabs/facter/facts.d', agents)
+  upload_file('demo/cluster.txt', '/etc/puppetlabs/facter/facts.d/cluster.txt', agents)
+  run_command('curl -k https://master:8140/packages/current/install.bash | sudo bash', agents)
+  run_command('/opt/puppetlabs/bin/puppetserver ca sign --all', master)
+  run_script('demo/setup_rbac.rb', master)
+  run_plan("demo::setup")
+}
