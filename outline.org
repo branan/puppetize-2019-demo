@@ -1,0 +1,85 @@
+* Intro
+Name/role
+
+I'm going to talk a bit about how PE lets you enable your organization
+to use Bolt content
+
+* Bolt
+
+** Let's say you have a plan (show the plan)
+This plan is basically a wrapper around the Package task that does
+some additional error handling, and wraps all the results into a nice
+report for me.
+
+** You want to make this available to other teams
+Say another team has a bunch of web servers, and they know apache
+isn't up-to-date.  They heard about your cool automation, and in
+particular, they've seen my nice report and want that information
+about their own patching.
+
+Right now they have to learn Bolt (They might not even want to learn
+Bolt)
+
+You need to sort out inventory in a shared project, or split out the
+module for separate projects, or...
+
+* PE
+With PE, you can create simple wrapper plans to let other teams solve
+their immediate problems, without concernig them with the details of
+Bolt or the Plan language.
+
+** (Show the wrapper plan)
+This plan invokes the plan we just looked at, but specifies just the
+apache package that the team wanted to fix up. It also uses a puppetdb
+query to pick the right nodes. They still get the nice reporting of my
+plan, and don't have to worry about Bolt.
+
+This idea of wrapper plans is much more powerful than the current RBAC
+rules for running Tasks on nodes - the Package task still lets you
+uninstall your kernel, even if just on a few machines. With this plan,
+that team can't do that - which means they can't blame Bolt (or you)
+for their mistakes ;)
+
+I many cases, these can even be done as simple YAML plans, instead of
+writing them in the puppet language.
+
+By the way, this puppetdb querie works out of the box in Plans in
+PE. Because the plan is run on the PE infrastructure, there's no
+separate configuration
+
+** (Update RBAC to enable wrapper plan for other user)
+Now that I've written this short wrapper plan, I can let that team run
+_just this plan_ in the PE UI, using our standard RBAC rules. They
+don't have to know it's built on top of another plan, and you don't
+have to worry about them entering incorrect parameters. Win-win!
+
+** (Switch tabs, show running the simplified plan as other user)
+Now when I log in as a user from the other team, I only have access in
+the UI to the plans I care about, with their simplified set of
+parameters.
+
+** (Click *run*)
+This plan is now running _in PE_. The user doesn't need to have Bolt
+on their laptop. They can navigate away from this page and check back
+on the results later. Because it's in PE, it's also API driven, so it
+could also be integrated into a custom self-service portal if you
+don't want to expose the PE console
+
+** (Back to the plan code)
+Now that team is super happy with this, and they want to be able to
+manage the PHP version on their web nodes as well. You don't have to
+take all the guard rails away to enable this.
+
+** (Add an `Enum` parameter to the plan, allowing a choice of packages)
+Using the puppet type system, I can expand the capabilities of this
+plan in just the ways that team needs, enabling self-service where it
+matters without exposing the complexities of Puppet or Bolt.
+
+* Summary
+The power of the Plan language, coupled with the centralized execution
+and access control of Puppet Enterprise can help you enable your
+organization to use the power of Bolt
+
+That's it! I'll be here to answer questions along with Yasmin, and you
+can find me at the Puppet Experience booth for the rest of the
+afternoon.
